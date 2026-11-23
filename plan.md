@@ -296,13 +296,13 @@ For each milestone:
 
 ## 13. Current project status and next actions
 
-**Status:** Planning and design direction established. Study boundary, data audit, and repository/environment inspection remain to be completed.
+**Status:** Milestone 1 (repository and application foundation) is complete. React + Vite is initialized under `frontend/`, planned frontend dependencies are installed, and the app starts locally. The source archives currently found are ward boundaries and roads; no facility dataset was found. The study boundary and GIS data audit remain open.
 
 Recommended next sequence:
 
-1. Inspect the current repository and development environment.
-2. Confirm the study boundary and inventory the available datasets.
-3. Complete Milestone 1, preserving existing project work.
+1. Confirm whether the study boundary is KMC or Kolkata district.
+2. Inspect the ward and road shapefile schemas and validate their extent, CRS, geometry, and coverage using a suitable GIS environment.
+3. Locate or source the facility datasets and record their provenance and license.
 4. Build Milestone 2 with clearly labelled sample content.
 5. Validate and export real data before connecting it to the map.
 

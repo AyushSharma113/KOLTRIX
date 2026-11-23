@@ -1,46 +1,47 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
 
-function roundedPolygonPath(points, radius = 18) {
-  const len = points.length
+function buildRoundedPolygonPath(points, defaultRadius = 20) {
   const corners = points.map((point, index) => {
-    const previous = points[(index - 1 + len) % len]
-    const next = points[(index + 1) % len]
+    const previous = points[(index - 1 + points.length) % points.length]
+    const next = points[(index + 1) % points.length]
     const inX = previous.x - point.x
     const inY = previous.y - point.y
     const outX = next.x - point.x
     const outY = next.y - point.y
     const inLength = Math.hypot(inX, inY)
     const outLength = Math.hypot(outX, outY)
-    const r = Math.min(radius, inLength * 0.42, outLength * 0.42)
+    const radius = Math.min(point.r ?? defaultRadius, inLength * 0.44, outLength * 0.44)
     return {
-      startX: point.x + (inX / inLength) * r,
-      startY: point.y + (inY / inLength) * r,
-      controlX: point.x,
-      controlY: point.y,
-      endX: point.x + (outX / outLength) * r,
-      endY: point.y + (outY / outLength) * r,
+      sx: point.x + inX / inLength * radius,
+      sy: point.y + inY / inLength * radius,
+      ex: point.x + outX / outLength * radius,
+      ey: point.y + outY / outLength * radius,
+      x: point.x,
+      y: point.y,
     }
   })
 
-  let path = `M ${corners[0].startX} ${corners[0].startY}`
+  let path = `M ${corners[0].sx.toFixed(2)},${corners[0].sy.toFixed(2)}`
   corners.forEach((corner, index) => {
-    path += ` Q ${corner.controlX} ${corner.controlY} ${corner.endX} ${corner.endY}`
-    const next = corners[(index + 1) % len]
-    path += ` L ${next.startX} ${next.startY}`
+    path += ` Q ${corner.x},${corner.y} ${corner.ex.toFixed(2)},${corner.ey.toFixed(2)}`
+    const next = corners[(index + 1) % corners.length]
+    path += ` L ${next.sx.toFixed(2)},${next.sy.toFixed(2)}`
   })
   return `${path} Z`
 }
 
 export default function SculptedMapFrame({ children, className = '' }) {
   const containerRef = useRef(null)
-  const uniqueId = useId().replaceAll(':', '')
-  const clipId = `koltrix-map-clip-${uniqueId}`
+  const id = useId().replaceAll(':', '')
+  const clipId = `koltrix-frame-clip-${id}`
+  const bezelId = `koltrix-frame-bezel-${id}`
+  const specularId = `koltrix-frame-specular-${id}`
+  const shadowId = `koltrix-frame-shadow-${id}`
   const [size, setSize] = useState({ width: 960, height: 640 })
 
   useEffect(() => {
     const element = containerRef.current
     if (!element) return undefined
-
     const observer = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect
       if (width > 0 && height > 0) setSize({ width, height })
@@ -50,23 +51,23 @@ export default function SculptedMapFrame({ children, className = '' }) {
   }, [])
 
   const framePath = useMemo(() => {
-    const { width, height } = size
-    const topShoulder = Math.min(180, width * 0.17)
-    const bottomLeftEar = Math.min(165, width * 0.17)
-    const bottomRightEar = Math.min(84, width * 0.1)
-    return roundedPolygonPath([
-      { x: 1, y: 1 },
-      { x: topShoulder, y: 1 },
-      { x: topShoulder + 24, y: 24 },
-      { x: width - topShoulder - 24, y: 24 },
-      { x: width - topShoulder, y: 1 },
-      { x: width - 1, y: 1 },
-      { x: width - 1, y: height - 1 },
-      { x: width - bottomRightEar, y: height - 1 },
-      { x: width - bottomRightEar - 24, y: height - 26 },
-      { x: bottomLeftEar + 24, y: height - 26 },
-      { x: bottomLeftEar, y: height - 1 },
-      { x: 1, y: height - 1 },
+    const { width: w, height: h } = size
+    const shoulder = Math.min(200, w * 0.18)
+    const leftEar = Math.min(182, w * 0.175)
+    const rightEar = Math.min(94, w * 0.095)
+    return buildRoundedPolygonPath([
+      { x: 1.5, y: 1.5, r: 25 },
+      { x: shoulder, y: 1.5, r: 20 },
+      { x: shoulder + 28, y: 28, r: 20 },
+      { x: w - shoulder - 28, y: 28, r: 20 },
+      { x: w - shoulder, y: 1.5, r: 20 },
+      { x: w - 1.5, y: 1.5, r: 25 },
+      { x: w - 1.5, y: h - 1.5, r: 25 },
+      { x: w - rightEar, y: h - 1.5, r: 20 },
+      { x: w - rightEar - 28, y: h - 26, r: 20 },
+      { x: leftEar + 28, y: h - 26, r: 20 },
+      { x: leftEar, y: h - 1.5, r: 20 },
+      { x: 1.5, y: h - 1.5, r: 25 },
     ])
   }, [size])
 
@@ -74,9 +75,7 @@ export default function SculptedMapFrame({ children, className = '' }) {
     <div ref={containerRef} className={`sculpted-map-frame ${className}`}>
       <svg className="sculpted-frame-defs" aria-hidden="true" width="0" height="0">
         <defs>
-          <clipPath id={clipId} clipPathUnits="userSpaceOnUse">
-            <path d={framePath} />
-          </clipPath>
+          <clipPath id={clipId} clipPathUnits="userSpaceOnUse"><path d={framePath} /></clipPath>
         </defs>
       </svg>
       <div className="sculpted-map-clip" style={{ clipPath: `url(#${clipId})` }}>
@@ -84,15 +83,30 @@ export default function SculptedMapFrame({ children, className = '' }) {
       </div>
       <svg className="sculpted-frame-border" viewBox={`0 0 ${size.width} ${size.height}`} preserveAspectRatio="none" aria-hidden="true">
         <defs>
-          <linearGradient id={`${clipId}-edge`} x1="0" y1="0" x2={size.width} y2={size.height} gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#777b8a" stopOpacity="0.72" />
-            <stop offset="32%" stopColor="#424653" stopOpacity="0.82" />
-            <stop offset="68%" stopColor="#292c38" stopOpacity="0.92" />
-            <stop offset="100%" stopColor="#626675" stopOpacity="0.66" />
+          <linearGradient id={bezelId} x1="0%" y1="0%" x2="15%" y2="100%">
+            <stop offset="0%" stopColor="#565d73" />
+            <stop offset="16%" stopColor="#3e4456" />
+            <stop offset="50%" stopColor="#272b37" />
+            <stop offset="84%" stopColor="#1f232e" />
+            <stop offset="100%" stopColor="#313646" />
           </linearGradient>
+          <linearGradient id={specularId} x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#fff" stopOpacity=".16" />
+            <stop offset="10%" stopColor="#fff" stopOpacity=".03" />
+            <stop offset="90%" stopColor="#fff" stopOpacity=".01" />
+            <stop offset="100%" stopColor="#94a3b8" stopOpacity=".09" />
+          </linearGradient>
+          <filter id={shadowId} x="-15%" y="-15%" width="130%" height="130%">
+            <feGaussianBlur stdDeviation="9.5" />
+          </filter>
         </defs>
-        <path className="sculpted-frame-halo" d={framePath} />
-        <path className="sculpted-frame-edge" d={framePath} stroke={`url(#${clipId}-edge)`} />
+        <g clipPath={`url(#${clipId})`}>
+          <path d={framePath} stroke="#040507" strokeWidth="22" strokeOpacity=".88" filter={`url(#${shadowId})`} />
+          <path d={framePath} stroke="#06070a" strokeWidth="5" strokeOpacity=".72" />
+          <path d={framePath} stroke={`url(#${specularId})`} strokeWidth="2.4" />
+        </g>
+        <path d={framePath} stroke="#050608" strokeWidth="3.2" />
+        <path d={framePath} stroke={`url(#${bezelId})`} strokeWidth="1.35" />
       </svg>
     </div>
   )

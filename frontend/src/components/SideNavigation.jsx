@@ -10,12 +10,14 @@ import {
   ScanEye,
   Settings,
   UserCog,
+  Waypoints,
 } from 'lucide-react'
 
 const navigationItems = [
   { label: 'Dashboard', icon: Grid2X2 },
-  { label: 'City Explorer', icon: MapPinned, active: true },
-  { label: 'Spatial Analytics', icon: ScanEye },
+  { label: 'City Explorer', icon: MapPinned, page: 'cityExplorer' },
+  { label: 'Socio-economic factors', icon: ScanEye, page: 'socioEconomic' },
+  { label: 'Network analysis', icon: Waypoints, page: 'networkAnalysis' },
   { label: 'Locate', icon: Crosshair },
   { label: 'Permits', icon: FileText },
   { label: 'Account', icon: UserCog },
@@ -26,20 +28,24 @@ const navigationItems = [
   { label: 'Sign out', icon: LogOut },
 ]
 
-export default function SideNavigation() {
+export default function SideNavigation({ activePage, onNavigate }) {
   return (
     <nav className="rail" aria-label="Main navigation">
-      {navigationItems.map(({ label, icon: Icon, active }) => (
+      {navigationItems.map(({ label, icon: Icon, page }) => {
+        const active = page === activePage
+        return (
         <button
           key={label}
           className={active ? 'rail-active' : undefined}
           aria-label={label}
           aria-current={active ? 'page' : undefined}
           type="button"
+          onClick={page ? () => onNavigate(page) : undefined}
         >
           <Icon size={19} />
         </button>
-      ))}
+        )
+      })}
     </nav>
   )
 }

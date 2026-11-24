@@ -1450,6 +1450,57 @@
 .rail { padding-top: 80px; }
 .rail button { margin-inline: auto; }
 .navbar-brand-zone { padding-left: 18px; }
+.ward-layer-toggle {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.ward-layer-toggle:hover { background: #202230; }
+.ward-layer-toggle:focus-visible { outline: 2px solid #b4eb42; outline-offset: 2px; }
+.ward-layer-toggle.enabled { color: #f4f4f5; }
+.ward-layer-toggle.enabled .layer-symbol { color: #ef4444; }
+.thematic-select {
+  display: block;
+  width: 100%;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid #303241;
+  border-radius: 8px;
+  background: #1b1d29;
+  color: #e3e4e9;
+  font: inherit;
+  font-size: 10px;
+}
+.thematic-select:focus-visible { outline: 2px solid #b4eb42; outline-offset: 2px; }
+.thematic-select option { background: #1b1d29; color: #f4f4f5; }
+.thematic-unit { margin: 8px 0 0; color: #9498a8; font-size: 10px; }
+.ramp-preview { display: flex; overflow: hidden; height: 12px; margin-top: 10px; border-radius: 6px; }
+.ramp-preview span { flex: 1; }
+.thematic-legend { display: grid; gap: 8px; margin-top: 10px; }
+.thematic-legend-row { display: flex; align-items: center; gap: 8px; color: #b7bac5; font-size: 9px; line-height: 1.25; }
+.thematic-legend-row > span { width: 13px; height: 13px; flex: 0 0 13px; border-radius: 3px; border: 1px solid rgb(255 255 255 / 12%); }
+.thematic-legend-row .no-data-swatch { background: #6b7280; }
+.ward-selected-card { display: flex; align-items: center; gap: 11px; padding: 12px; border: 1px solid #303241; border-radius: 10px; background: #1b1d29; }
+.ward-selected-card strong, .ward-selected-card p { display: block; margin: 0; }
+.ward-selected-card strong { color: #f4f4f5; font-size: 11px; }
+.ward-selected-card p { margin-top: 4px; color: #9296a5; font-size: 9px; }
+.selected-indicator-card { display: grid; gap: 8px; margin-top: 12px; padding: 13px; border: 1px solid #37333b; border-radius: 10px; background: #211f2a; }
+.selected-indicator-card strong { color: #c4c6d0; font-size: 10px; }
+.selected-indicator-card b { color: #b4eb42; font-size: 19px; }
+.ward-attribute-list { display: grid; gap: 0; }
+.ward-attribute { display: flex; justify-content: space-between; gap: 10px; padding: 10px 2px; border-bottom: 1px solid #292b37; color: #aeb1bd; font-size: 9px; }
+.ward-attribute strong { color: #e4e5ea; font-weight: 600; text-align: right; }
+.ward-empty-state { display: grid; justify-items: start; gap: 10px; padding: 16px 13px; border: 1px dashed #353744; border-radius: 10px; color: #e5e6eb; font-size: 11px; }
+.ward-empty-state p { margin: 0; color: #9598a7; font-size: 10px; line-height: 1.5; }
+.ward-details-panel .panel-footer { margin-top: 16px; line-height: 1.5; }
+.road-color-preview { display: flex; align-items: center; height: 20px; margin-top: 10px; }
+.road-color-preview span { display: block; width: 100%; height: 3px; border-radius: 3px; box-shadow: 0 0 10px color-mix(in srgb, currentColor 20%, transparent); }
+.road-class-count { margin-top: 14px; color: #85899a; font-size: 9px; line-height: 1.5; }
+.road-class-count code { color: #b8bbc7; }
+.road-details-panel .ward-attribute strong { overflow-wrap: anywhere; }
 @media (max-width: 1100px) {
   .dashboard { grid-template-columns: 64px 210px minmax(350px, 1fr) 285px; }
 }

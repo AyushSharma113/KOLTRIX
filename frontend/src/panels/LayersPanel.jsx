@@ -10,13 +10,12 @@ import {
 } from 'lucide-react'
 
 const categories = [
-  { label: 'Ward boundaries', icon: MapPinned },
   { label: 'Hospitals', icon: Hospital },
   { label: 'Education', icon: GraduationCap },
   { label: 'Transport', icon: BusFront },
 ]
 
-export default function LayersPanel() {
+export default function LayersPanel({ wardBoundariesEnabled, onWardBoundariesToggle }) {
   return (
     <aside className="layers-panel">
       <div className="panel-heading">
@@ -29,6 +28,17 @@ export default function LayersPanel() {
         <span>OpenStreetMap</span><span className="switch on" />
       </button>
       <div className="section-label with-line">KOLKATA DATA <span>COMING SOON</span></div>
+      <button
+        className={`layer-row ward-layer-toggle${wardBoundariesEnabled ? ' enabled' : ''}`}
+        type="button"
+        role="switch"
+        aria-checked={wardBoundariesEnabled}
+        onClick={onWardBoundariesToggle}
+      >
+        <span className="layer-symbol"><MapPinned size={15} /></span>
+        <span>Ward boundaries</span>
+        <span className={`switch${wardBoundariesEnabled ? ' on' : ''}`} />
+      </button>
       {categories.map(({ label, icon: Icon }) => (
         <div className="layer-row disabled" key={label}>
           <span className="layer-symbol"><Icon size={15} /></span>
